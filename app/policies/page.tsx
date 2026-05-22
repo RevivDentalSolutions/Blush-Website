@@ -1,0 +1,3 @@
+import type { Metadata } from "next";
+export const metadata: Metadata = { title: "Policies | Blush Ink & Beauty Studio", description: "Studio policies for deposits, cancellations, late arrivals, and eligibility." };
+export default function Page(){return <section className="section container"><h1>Studio Policies</h1><div className="card"><h2>Booking & Deposits</h2><p>Deposit required to reserve appointment. Non-refundable, transferable once with notice.</p><h2>Cancellation</h2><p>Please provide 48 hours notice to reschedule and avoid forfeiting deposit.</p><h2>Eligibility</h2><p>Pregnancy, active skin conditions, or select medications may require postponement.</p></div></section>}
