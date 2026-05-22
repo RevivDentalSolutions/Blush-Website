@@ -1,0 +1,3 @@
+import type { Metadata } from "next";
+export const metadata: Metadata = { title: "Permanent eyeliner | Blush Ink & Beauty Studio", description: "Permanent eyeliner service details, prep, aftercare, and booking for Blush Ink & Beauty Studio." };
+export default function Page(){return <section className="section container"><h1>Permanent eyeliner</h1><div className="grid two-col"><div className="card"><h2>What to Expect</h2><p>Your appointment includes consultation, mapping, treatment, and aftercare coaching.</p></div><div className="card"><h2>Prep & Aftercare</h2><p>Avoid alcohol/caffeine before treatment, follow healing instructions, and schedule your touch-up as recommended.</p></div></div></section>}

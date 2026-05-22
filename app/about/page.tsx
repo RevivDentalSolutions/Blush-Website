@@ -1,0 +1,3 @@
+import type { Metadata } from "next";
+export const metadata: Metadata = { title: "About | Blush Ink & Beauty Studio", description: "Meet Blush Ink & Beauty Studio and learn our luxury permanent makeup philosophy." };
+export default function Page(){return <section className="section container"><h1>About Blush Ink & Beauty Studio</h1><p>We blend artistry and precision to create elegant, confidence-boosting enhancements tailored to your features.</p><div className="card"><h2>Location</h2><p>Inside Dr. Stephen Boatright&apos;s Endodontic practice at 6 Windsong Drive, North Little Rock, Arkansas.</p></div></section>}
