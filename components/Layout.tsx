@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { site } from "@/data/site";
 
 const links = [
@@ -6,6 +9,9 @@ const links = [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/blush-vault")) return <>{children}</>;
+
   return (
     <>
       <header>
