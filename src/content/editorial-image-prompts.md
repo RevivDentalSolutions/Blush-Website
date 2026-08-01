@@ -1,5 +1,10 @@
 # Original editorial image prompts
 
+## Campaign benchmark
+The approved reference supplied by the client on August 1, 2026 is the visual benchmark for this set. Match its close facial scale, warm cocoa tonal range, bronzed luminous complexion, visible realistic pores, restrained glossy nude lips, softly sculpted brows, light-catching eyes, shallow studio depth, and quiet premium-magazine finish. Treat it only as art direction: do not reproduce either pictured model, pose, face, crop, or exact lighting pattern.
+
+All six service assets must read as one campaign while using visibly different adult models. Keep camera height, lens character, background family, highlight rolloff, contrast, and retouching restraint consistent. Vary ethnicity, age, facial structure, skin depth, eye color, and hair color without changing the campaign grade.
+
 ## Shared production constraints
 Use for every prompt: **adult model (age 25+) only; golden, bronzed, luminous skin; luxury beauty campaign; close shoulders-up or collarbone-up crop; professional sculpted studio lighting; caramel, honey, bronze, mocha, nude, champagne, or cocoa seamless backdrop; refined neutral makeup; realistic pores, lip texture, brow hairs, and facial anatomy; premium permanent-beauty advertisement finish. Hair must be controlled and kept away from the treatment feature. No outdoor, waterfront, street, office, vacation, or lifestyle setting; no glasses; no bangs; no hands covering the face; no extreme hairstyle; no flat or cool washed-out lighting; no bright red or heavy opaque lipstick; no text, logo, watermark, celebrity resemblance, real-person resemblance request, distorted or duplicated features, plastic skin, exaggerated procedures, before-and-after claim, medical equipment, or treatment-in-progress imagery.** Generate a vertical 4:5 portrait and a horizontal 3:2 variant with safe crops that retain the full treatment feature.
 

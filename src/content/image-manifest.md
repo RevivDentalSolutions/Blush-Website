@@ -17,3 +17,5 @@ All editorial images represent brand mood only. Never place them in a client-res
 | `studio-interior.webp` | About / Contact | Actual private studio | Landscape 2000×1350 | Show clean environment | Interior of Blush Ink & Beauty Studio | Real studio photo |
 
 Export responsive 640, 960, 1400, and 2000-pixel variants where appropriate. Keep originals outside the public build and strip unnecessary metadata.
+
+The complete generation and approval matrix is maintained in [`campaign-shot-list.md`](./campaign-shot-list.md). The supplied benchmark must not be copied, cropped into the site, or used as an identity reference.
