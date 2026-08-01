@@ -1,23 +1,6 @@
-import Link from "next/link";
-import { services, site } from "@/data/site";
-
-export const Hero = () => (
-  <section className="hero">
-    <div className="container">
-      <h1>Luxury Permanent Makeup in North Little Rock</h1>
-      <p>Professional, warm, and results-driven artistry for brows, lips, eyeliner, and skin renewal.</p>
-      <p><a className="btn btn-primary" href={site.bookingLink}>Book Your Appointment</a> <Link className="btn btn-secondary" href="/contact">Ask a Question</Link></p>
-    </div>
-  </section>
-);
-
-export const ServicesGrid = () => (
-  <section className="section container">
-    <h2>Signature Services</h2>
-    <div className="grid three-col">{services.map(s => <article key={s.slug} className="card"><h3>{s.name}</h3><p>{s.desc}</p><p><strong>{s.price}</strong></p><Link href={`/${s.slug}`}>Learn more →</Link></article>)}</div>
-  </section>
-);
-
-export const ContactStrip = () => (
-  <section className="section"><div className="container card"><h2>Ready to feel confident?</h2><p><a className="btn btn-primary" href={site.bookingLink}>Book Your Appointment</a> <a className="btn btn-secondary" href={site.phoneHref}>Call Now</a></p></div></section>
-);
+import Image from "next/image"; import Link from "next/link"; import {services,site} from "@/data/site";
+export function SectionHeading({eyebrow,title,copy}:{eyebrow:string;title:string;copy?:string}){return <div className="section-heading"><p className="eyebrow">{eyebrow}</p><h2>{title}</h2>{copy&&<p>{copy}</p>}</div>}
+export const Hero=()=> <section className="hero"><div className="hero-media"><Image src={services[0].image} alt={services[0].alt} fill priority sizes="100vw"/><div className="hero-shade"/></div><div className="hero-content container"><p className="eyebrow">North Little Rock, Arkansas</p><h1>Permanent beauty,<br/><em>refined.</em></h1><p className="hero-copy">Customized permanent makeup and advanced skin treatments designed to enhance your natural features with polished, lasting-looking results.</p><div className="button-row"><a className="btn btn-light" href={site.bookingLink}>Book an appointment</a><Link className="text-link light" href="/services">Explore services <span>↗</span></Link></div><p className="image-disclosure">Editorial brand imagery · Not a client result</p></div></section>;
+export const ServicesGrid=()=> <section className="section services-section container"><SectionHeading eyebrow="Signature services" title="Artistry in every detail." copy="Personalized treatments considered through the lens of balance, restraint, and your individual features."/><div className="service-grid">{services.map((s,i)=><article className={`service-card service-${i%3}`} key={s.slug}><Link href={`/${s.slug}`} className="service-image" style={{"--image-focus":s.focus} as React.CSSProperties}><Image src={s.image} alt={s.alt} fill sizes="(max-width: 700px) 92vw, 40vw" loading="lazy"/><span className="image-label">{s.visualCue} · Editorial</span></Link><p className="eyebrow">{s.eyebrow}</p><h3><Link href={`/${s.slug}`}>{s.name}</Link></h3><p>{s.desc}</p><Link className="text-link" href={`/${s.slug}`}>Discover the service <span>↗</span></Link></article>)}</div></section>;
+export const BookingCTA=()=> <section className="booking-cta"><div className="booking-image"><Image src={services[1].image} alt={services[1].alt} fill sizes="100vw" loading="lazy"/><div className="hero-shade"/></div><div className="container booking-content"><p className="eyebrow">Begin with a conversation</p><h2>Your features.<br/><em>Your signature.</em></h2><p>Thoughtful artistry begins with listening. Explore your options and plan a treatment that feels distinctly yours.</p><a className="btn btn-light" href={site.bookingLink}>Book an appointment</a></div></section>;
+export const ContactStrip=BookingCTA;

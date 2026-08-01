@@ -1,0 +1,1 @@
+export default function Page(){return <section className="page-hero container"><p className="eyebrow">Legal</p><h1>Privacy</h1><p>Approved privacy policy content is needed before launch. This page intentionally contains no invented legal terms.</p></section>}
