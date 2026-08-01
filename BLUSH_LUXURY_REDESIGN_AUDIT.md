@@ -39,6 +39,3 @@ Temporary licensed Unsplash editorial images are labeled as representative edito
 5. Add canonical metadata foundation, Open Graph, BeautySalon schema, sitemap, and robots.
 6. Replace temporary visuals and placeholders with approved Jessica/client/original campaign assets.
 7. Replace placeholder booking URL/phone, connect and validate the inquiry form, confirm domain/canonical, and conduct a final legal/content review.
-
-## Service-image recognition gate (revision)
-Every service image now has an explicit treatment cue, descriptive alt text, and a breakpoint-safe focal point. Final image approval uses a one-second recognition test: **could someone identify the service from the photograph without reading its title?** Powder Brows must retain the full forehead and two unobstructed brows; Lip Blushing must center naturally tinted lips; Permanent Eyeliner must retain both eyes and upper lash lines; ProCell must make realistic skin quality the subject. Scar and stretch-mark imagery must remain tasteful concepts and may never masquerade as client results. A candidate fails if styling, hair, hands, eyewear, or cropping conceals the treatment area.
