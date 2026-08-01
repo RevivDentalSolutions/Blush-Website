@@ -1,12 +1,4 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Layout } from "@/components/Layout";
-
-export const metadata: Metadata = {
-  title: "Blush Ink & Beauty Studio | Luxury Permanent Makeup",
-  description: "Luxury permanent makeup studio in North Little Rock offering powder brows, lip blushing, permanent eyeliner, scar camouflage, and ProCell microchanneling.",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body><Layout>{children}</Layout></body></html>;
-}
+import type {Metadata} from "next";import "./globals.css";import {Layout} from "@/components/Layout";import {site} from "@/data/site";
+export const metadata:Metadata={metadataBase:new URL("https://blushinkbeautystudio.com"),title:{default:"Blush Ink & Beauty Studio | North Little Rock",template:"%s | Blush Ink & Beauty Studio"},description:"Customized permanent makeup and advanced skin services in North Little Rock, Arkansas.",alternates:{canonical:"/"},openGraph:{type:"website",locale:"en_US",siteName:site.name,title:"Blush Ink & Beauty Studio",description:"Permanent beauty, refined in North Little Rock, Arkansas.",images:[{url:"https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&w=1200&q=85",width:1200,height:630,alt:"Blush editorial beauty portrait"}]}};
+const schema={"@context":"https://schema.org","@type":"BeautySalon",name:site.name,url:"https://blushinkbeautystudio.com",telephone:site.phone,address:{"@type":"PostalAddress",streetAddress:site.streetAddress,addressLocality:site.locality,addressRegion:site.region,addressCountry:"US"}};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><Layout>{children}</Layout><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></body></html>}
