@@ -1,10 +1,10 @@
 export const site = {
   name: "Blush Ink & Beauty Studio",
   shortName: "BLUSH",
-  bookingLink: "https://example.com/book-now",
-  phone: "501-555-0148",
-  phoneHref: "tel:+15015550148",
-  smsHref: "sms:+15015550148",
+  bookingLink: "https://book.squareup.com/appointments/cwj3tt3bun4f31/location/L050BKE1TER30/services?rwg_token=AE37R_gam4Xsn3VajL1inrwgm-GMJcs_zF3fPoaGmJ1yD1chqy31WT9sEl8R6Xw9TwBc3Bih6Ny5qFA0L1IcfkNGSSKOllt_lQ%3D%3D",
+  phone: "",
+  phoneHref: "",
+  smsHref: "",
   address: "Inside Dr. Stephen Boatright's Endodontic practice, 6 Windsong Drive, North Little Rock, Arkansas",
   streetAddress: "6 Windsong Drive", locality: "North Little Rock", region: "AR",
   mapEmbed: "https://maps.google.com/maps?q=6%20Windsong%20Drive%20North%20Little%20Rock%20Arkansas&t=&z=13&ie=UTF8&iwloc=&output=embed"
@@ -19,4 +19,12 @@ export const services: Service[] = [
  {slug:"scar-camouflage",name:"Scar Camouflage",price:"$450+",eyebrow:"Paramedical artistry",desc:"Thoughtful pigment blending planned for eligible healed scars.",image:"https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=1400&q=85",alt:"Abstract close crop of healthy skin in soft neutral light",overview:"A consultation-led pigment service intended to soften the visual contrast of eligible, fully healed scar tissue.",forWhom:"Guests with fully healed scars who may be suitable for color matching after assessment.",benefits:["Individual assessment","Careful color matching","Conservative treatment planning"],recovery:"Camouflage work heals in stages and suitability varies. Follow all aftercare directions and allow the area to settle before evaluation.",timing:"Consultation is required to assess eligibility, timing, and a treatment plan.",faqs:[{q:"Can every scar be treated?",a:"No. Age, texture, color, location, and healing status affect eligibility. An assessment is required."},{q:"Are results guaranteed?",a:"No. Scar tissue and pigment response vary, so outcomes cannot be guaranteed."}]},
  {slug:"stretch-mark-revision",name:"Stretch Mark Revision",eyebrow:"Texture support",desc:"A personalized approach for eligible, fully healed stretch marks.",image:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1400&q=85",alt:"Tasteful abstract skin detail in warm editorial light",overview:"A consultation-led service for the appearance of eligible stretch marks, planned according to skin condition and treatment goals.",forWhom:"Guests with mature, fully healed stretch marks who are suitable following an in-person assessment.",benefits:["Eligibility assessment","Personalized plan","Clear aftercare"],recovery:"Skin response varies. Follow individualized aftercare and avoid making plans around an assumed healing timeline.",timing:"Pricing, treatment time, and session recommendations require consultation.",faqs:[{q:"Is a consultation required?",a:"Yes. The area must be assessed before a treatment plan can be proposed."},{q:"Will marks disappear completely?",a:"No outcome can be guaranteed. The service is discussed in terms of appearance, not complete removal."}]}
 ];
+// Service-specific editorial campaigns. These are representative images, not client results.
+const campaignImages: Record<string, Pick<Service, "image" | "alt">> = {
+  "powder-brows": {image: "/images/powder-brows-campaign.png", alt: "Luxury beauty portrait with both softly defined powder brows fully visible"},
+  "lip-blushing": {image: "/images/lip-blushing-campaign.png", alt: "Luxury studio portrait emphasizing naturally enhanced rosy nude lips"},
+  "permanent-eyeliner": {image: "/images/permanent-eyeliner-campaign.png", alt: "Luxury beauty portrait emphasizing light eyes and a subtle upper lash-line enhancement"},
+  "procell-microchanneling": {image: "/images/procell-campaign.png", alt: "Luxury skin-care portrait with luminous, healthy-looking bronzed skin"}
+};
+services.forEach(service => Object.assign(service, campaignImages[service.slug] ?? {}));
 export const getService=(slug:string)=>services.find(s=>s.slug===slug)!;

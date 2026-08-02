@@ -1,0 +1,12 @@
+import type {Metadata} from "next";
+import Image from "next/image";
+import Link from "next/link";
+import {BookingCTA} from "@/components/Sections";
+
+export const metadata:Metadata={title:"The Blush Journal | Permanent Makeup & Skin Care",description:"Thoughtful permanent makeup and skin-care guidance from Blush Ink & Beauty Studio in North Little Rock, Arkansas."};
+const posts=[
+  {category:"Powder Brows",title:"What makes powder brows look soft—not stamped on?",copy:"A look at mapping, pigment choice, and why a beautifully healed result begins with restraint.",href:"/powder-brows",image:"/images/powder-brows-campaign.png",alt:"Defined powder brows on a luxury beauty model"},
+  {category:"Lip Blushing",title:"Lip blushing: the polished, everyday version of lip color.",copy:"The difference between a softly enhanced lip blush and traditional lipstick, plus what a consultation considers.",href:"/lip-blushing",image:"/images/lip-blushing-campaign.png",alt:"Rosy nude lip blush on a luxury beauty model"},
+  {category:"Skin Renewal",title:"A thoughtful introduction to ProCell Microchanneling.",copy:"What to discuss during your skin consultation, how a plan is personalized, and why aftercare matters.",href:"/procell-microchanneling",image:"/images/procell-campaign.png",alt:"Luminous healthy-looking skin in warm studio light"}
+];
+export default function Page(){return <><section className="journal-hero container"><p className="eyebrow">The Blush Journal</p><h1>Beauty, with<br/><em>more context.</em></h1><p>Thoughtful notes on permanent makeup, skin renewal, and choosing treatments that feel aligned with you.</p></section><section className="container journal-grid">{posts.map((post,index)=><article className={`journal-card journal-card-${index}`} key={post.title}><Link className="journal-image" href={post.href}><Image src={post.image} alt={post.alt} fill sizes="(max-width: 800px) 92vw, 32vw"/></Link><p className="eyebrow">{post.category}</p><h2><Link href={post.href}>{post.title}</Link></h2><p>{post.copy}</p><Link className="text-link" href={post.href}>Read more <span>↗</span></Link></article>)}</section><section className="section container journal-note"><p className="eyebrow">A more personal approach</p><h2>Good treatment decisions begin with good questions.</h2><p>Every face, skin history, and goal is different. The Journal is here to make the first conversation feel clearer; your consultation is where we make it personal.</p></section><BookingCTA/></>}
