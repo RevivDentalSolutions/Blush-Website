@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/gallery", "destination": "/portfolio", "permanent": true },
+    { "source": "/services", "destination": "/permanent-makeup", "permanent": true }
+  ]
+}
