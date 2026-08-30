@@ -2,11 +2,11 @@ export const site = {
   name: "Blush Ink & Beauty Studio",
   shortName: "BLUSH",
   bookingLink: "https://book.squareup.com/appointments/cwj3tt3bun4f31/location/L050BKE1TER30/services?rwg_token=AE37R_gam4Xsn3VajL1inrwgm-GMJcs_zF3fPoaGmJ1yD1chqy31WT9sEl8R6Xw9TwBc3Bih6Ny5qFA0L1IcfkNGSSKOllt_lQ%3D%3D",
-  phone: "",
-  phoneHref: "",
-  smsHref: "",
-  address: "Inside Dr. Stephen Boatright's Endodontic practice, 6 Windsong Drive, North Little Rock, Arkansas",
-  streetAddress: "6 Windsong Drive", locality: "North Little Rock", region: "AR",
+  phone: "501-961-8064",
+  phoneHref: "tel:+15019618064",
+  smsHref: "sms:+15019618064",
+  address: "6 Windsong Dr., North Little Rock, AR 72113",
+  streetAddress: "6 Windsong Dr.", locality: "North Little Rock", region: "AR", postalCode: "72113",
   mapEmbed: "https://maps.google.com/maps?q=6%20Windsong%20Drive%20North%20Little%20Rock%20Arkansas&t=&z=13&ie=UTF8&iwloc=&output=embed"
 };
 
