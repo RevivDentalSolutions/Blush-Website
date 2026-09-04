@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const squareUrl = "https://connect.squareup.com/v2";
-const squareVersion = "2026-08-20";
+const squareVersion = "2026-08-19";
+const depositAmountCents = 5000;
 
 function authorized(request: NextRequest) {
   const secret = process.env.VAPI_WEBHOOK_SECRET;
@@ -38,12 +39,16 @@ async function square(
 }
 
 function required(input: Record<string, unknown>, fields: string[]) {
-  return fields.filter((key) => input[key] === undefined || input[key] === null || input[key] === "");
+  return fields.filter(
+    (key) => input[key] === undefined || input[key] === null || input[key] === "",
+  );
 }
 
 async function findCustomer(input: Record<string, unknown>) {
-  const phone = typeof input.phone_number === "string" ? input.phone_number.trim() : "";
-  const email = typeof input.email_address === "string" ? input.email_address.trim() : "";
+  const phone =
+    typeof input.phone_number === "string" ? input.phone_number.trim() : "";
+  const email =
+    typeof input.email_address === "string" ? input.email_address.trim() : "";
   if (!phone && !email) return null;
 
   const filters: Record<string, string> = {};
@@ -63,7 +68,9 @@ async function resolveCustomer(input: Record<string, unknown>) {
   }
 
   const existing = await findCustomer(input);
-  if (existing?.id) return { id: existing.id, created: false, customer: existing };
+  if (existing?.id) {
+    return { id: existing.id, created: false, customer: existing };
+  }
 
   const missing = required(input, ["given_name", "phone_number"]);
   if (missing.length) {
@@ -180,13 +187,96 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (input.action === "create_deposit_link") {
+      const serviceName =
+        typeof input.service_name === "string" && input.service_name.trim()
+          ? input.service_name.trim()
+          : "Blush Appointment";
+
+      const prePopulatedData: Record<string, string> = {};
+      if (typeof input.email_address === "string" && input.email_address.trim()) {
+        prePopulatedData.buyer_email = input.email_address.trim();
+      }
+      if (typeof input.phone_number === "string" && input.phone_number.trim()) {
+        prePopulatedData.buyer_phone_number = input.phone_number.trim();
+      }
+
+      const dateNote =
+        typeof input.start_at === "string" && input.start_at
+          ? ` for ${input.start_at}`
+          : "";
+      const clientName = [input.given_name, input.family_name]
+        .filter((value) => typeof value === "string" && value.trim())
+        .join(" ");
+
+      const paymentLinkBody: Record<string, unknown> = {
+        idempotency_key: crypto.randomUUID(),
+        description: `Blush $50 appointment deposit - ${serviceName}`,
+        quick_pay: {
+          name: `${serviceName} - Appointment Deposit`,
+          price_money: {
+            amount: depositAmountCents,
+            currency: "USD",
+          },
+          location_id: locationId,
+        },
+        payment_note: `Blush appointment deposit${clientName ? ` for ${clientName}` : ""}${dateNote}`,
+      };
+
+      if (Object.keys(prePopulatedData).length) {
+        paymentLinkBody.pre_populated_data = prePopulatedData;
+      }
+
+      const result = await square(
+        "/online-checkout/payment-links",
+        "POST",
+        paymentLinkBody,
+      );
+
+      return NextResponse.json({
+        success: true,
+        amount: depositAmountCents,
+        currency: "USD",
+        payment_link_id: result.payment_link?.id,
+        order_id: result.payment_link?.order_id,
+        url: result.payment_link?.url,
+        long_url: result.payment_link?.long_url,
+      });
+    }
+
+    if (input.action === "check_deposit_status") {
+      const missing = required(input, ["order_id"]);
+      if (missing.length) {
+        return NextResponse.json(
+          { error: "Missing order_id" },
+          { status: 400 },
+        );
+      }
+
+      const result = await square(
+        `/orders/${encodeURIComponent(String(input.order_id))}`,
+        "GET",
+      );
+      const state = result.order?.state ?? "UNKNOWN";
+      return NextResponse.json({
+        success: true,
+        order_id: input.order_id,
+        state,
+        paid: state === "COMPLETED",
+        order: result.order,
+      });
+    }
+
     if (input.action === "get_booking") {
       const missing = required(input, ["booking_id"]);
       if (missing.length) {
         return NextResponse.json({ error: "Missing booking_id" }, { status: 400 });
       }
       return NextResponse.json(
-        await square(`/bookings/${encodeURIComponent(String(input.booking_id))}`, "GET"),
+        await square(
+          `/bookings/${encodeURIComponent(String(input.booking_id))}`,
+          "GET",
+        ),
       );
     }
 
@@ -203,7 +293,9 @@ export async function POST(request: NextRequest) {
         version: input.booking_version,
       };
       if (input.start_at) booking.start_at = input.start_at;
-      if (input.customer_note !== undefined) booking.customer_note = input.customer_note;
+      if (input.customer_note !== undefined) {
+        booking.customer_note = input.customer_note;
+      }
       if (input.service_variation_id && input.team_member_id) {
         const segment: Record<string, unknown> = {
           duration_minutes: input.duration_minutes ?? 180,
@@ -243,13 +335,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Unsupported action. Use search_availability, find_or_create_customer, create_booking, get_booking, update_booking, or cancel_booking.",
+          "Unsupported action. Use search_availability, find_or_create_customer, create_booking, create_deposit_link, check_deposit_status, get_booking, update_booking, or cancel_booking.",
       },
       { status: 400 },
     );
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Square booking request failed." },
+      {
+        error:
+          error instanceof Error ? error.message : "Square booking request failed.",
+      },
       { status: 500 },
     );
   }
