@@ -39,7 +39,7 @@ async function square(path: string, method: "GET" | "POST" | "PUT" | "DELETE", b
     const detail = squareError?.detail ?? squareError?.code ?? data.message ?? "Square request failed.";
     throw new Error(`Square API error (HTTP ${response.status}): ${detail}`);
   }
-  return data as Record<string, any>;
+  return data;
 }
 
 async function highLevel(path: string, method: "POST", body: unknown) {
@@ -69,13 +69,15 @@ async function findCustomer(input: Record<string, unknown>) {
   if (phone) filters.phone_number = phone;
   else if (email) filters.email_address = email;
   const result = await square("/customers/search", "POST", { query: { filter: filters }, limit: 10 });
-  return result.customers?.[0] ?? null;
+  const customers = Array.isArray(result.customers) ? result.customers : [];
+  const first = customers[0];
+  return first && typeof first === "object" ? first as Record<string, unknown> : null;
 }
 
 async function resolveCustomer(input: Record<string, unknown>) {
   if (typeof input.customer_id === "string" && input.customer_id) return { id: input.customer_id, created: false };
   const existing = await findCustomer(input);
-  if (existing?.id) return { id: existing.id, created: false, customer: existing };
+  if (existing && typeof existing.id === "string" && existing.id) return { id: existing.id, created: false, customer: existing };
   const missing = required(input, ["given_name", "phone_number"]);
   if (missing.length) throw new Error(`Customer not found. To create one, provide: ${missing.join(", ")}.`);
   const customerBody: Record<string, unknown> = {
@@ -87,7 +89,9 @@ async function resolveCustomer(input: Record<string, unknown>) {
   if (input.email_address) customerBody.email_address = input.email_address;
   if (input.note) customerBody.note = input.note;
   const created = await square("/customers", "POST", customerBody);
-  return { id: created.customer.id, created: true, customer: created.customer };
+  const customer = created.customer;
+  if (!customer || typeof customer !== "object" || !("id" in customer) || typeof customer.id !== "string") throw new Error("Square did not return a customer ID.");
+  return { id: customer.id, created: true, customer };
 }
 
 async function createDepositLink(input: Record<string, unknown>, locationId: string) {
@@ -134,6 +138,10 @@ async function sendDepositSms(input: Record<string, unknown>, paymentUrl: string
   return { contactId, messageId: messageResult.messageId ?? messageResult.id, message: messageResult };
 }
 
+function objectValue(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+}
+
 export async function POST(request: NextRequest) {
   if (!authorized(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
@@ -145,7 +153,7 @@ export async function POST(request: NextRequest) {
       const missing = required(input, ["start_at", "end_at", "service_variation_id", "team_member_id"]);
       if (missing.length) return NextResponse.json({ error: `Missing availability details: ${missing.join(", ")}` }, { status: 400 });
       const result = await square("/bookings/availability/search", "POST", { query: { filter: { start_at_range: { start_at: input.start_at, end_at: input.end_at }, location_id: locationId, segment_filters: [{ service_variation_id: input.service_variation_id, team_member_id_filter: { any: [input.team_member_id] } }] } } });
-      return NextResponse.json({ success: true, availabilities: result.availabilities ?? [] });
+      return NextResponse.json({ success: true, availabilities: Array.isArray(result.availabilities) ? result.availabilities : [] });
     }
 
     if (input.action === "find_or_create_customer") {
@@ -165,25 +173,28 @@ export async function POST(request: NextRequest) {
 
     if (input.action === "create_deposit_link") {
       const result = await createDepositLink(input, locationId);
-      return NextResponse.json({ success: true, amount: depositAmountCents, currency: "USD", payment_link_id: result.payment_link?.id, order_id: result.payment_link?.order_id, url: result.payment_link?.url, long_url: result.payment_link?.long_url });
+      const paymentLink = objectValue(result.payment_link);
+      return NextResponse.json({ success: true, amount: depositAmountCents, currency: "USD", payment_link_id: paymentLink?.id, order_id: paymentLink?.order_id, url: paymentLink?.url, long_url: paymentLink?.long_url });
     }
 
     if (input.action === "create_and_send_deposit_link") {
       const missing = required(input, ["given_name", "family_name", "phone_number"]);
       if (missing.length) return NextResponse.json({ error: `Missing deposit details: ${missing.join(", ")}` }, { status: 400 });
       const result = await createDepositLink(input, locationId);
-      const paymentUrl = result.payment_link?.url ?? result.payment_link?.long_url;
+      const paymentLink = objectValue(result.payment_link);
+      const paymentUrl = typeof paymentLink?.url === "string" ? paymentLink.url : typeof paymentLink?.long_url === "string" ? paymentLink.long_url : undefined;
       if (!paymentUrl) throw new Error("Square did not return a deposit payment URL.");
       const sms = await sendDepositSms(input, paymentUrl);
-      return NextResponse.json({ success: true, amount: depositAmountCents, currency: "USD", payment_link_id: result.payment_link?.id, order_id: result.payment_link?.order_id, url: paymentUrl, highlevel_contact_id: sms.contactId, highlevel_message_id: sms.messageId, sms_sent: true });
+      return NextResponse.json({ success: true, amount: depositAmountCents, currency: "USD", payment_link_id: paymentLink?.id, order_id: paymentLink?.order_id, url: paymentUrl, highlevel_contact_id: sms.contactId, highlevel_message_id: sms.messageId, sms_sent: true });
     }
 
     if (input.action === "check_deposit_status") {
       const missing = required(input, ["order_id"]);
       if (missing.length) return NextResponse.json({ error: "Missing order_id" }, { status: 400 });
       const result = await square(`/orders/${encodeURIComponent(String(input.order_id))}`, "GET");
-      const state = result.order?.state ?? "UNKNOWN";
-      return NextResponse.json({ success: true, order_id: input.order_id, state, paid: state === "COMPLETED", order: result.order });
+      const order = objectValue(result.order);
+      const state = typeof order?.state === "string" ? order.state : "UNKNOWN";
+      return NextResponse.json({ success: true, order_id: input.order_id, state, paid: state === "COMPLETED", order });
     }
 
     if (input.action === "get_booking") {
