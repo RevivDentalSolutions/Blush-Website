@@ -20,8 +20,20 @@ async function square(path: string, method: "GET" | "POST" | "PUT" | "DELETE", b
     cache: "no-store",
   });
   const text = await response.text();
-  const data = text ? JSON.parse(text) : {};
-  if (!response.ok) throw new Error(data?.errors?.[0]?.detail ?? "Square request failed.");
+  let data: any = {};
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      const preview = text.replace(/\s+/g, " ").trim().slice(0, 300);
+      throw new Error(`Square returned a non-JSON response (HTTP ${response.status})${preview ? `: ${preview}` : "."}`);
+    }
+  }
+  if (!response.ok) {
+    const squareError = data?.errors?.[0];
+    const detail = squareError?.detail ?? squareError?.code ?? data?.message ?? "Square request failed.";
+    throw new Error(`Square API error (HTTP ${response.status}): ${detail}`);
+  }
   return data;
 }
 
