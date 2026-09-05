@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {BookingCTA} from "@/components/Sections";
 
-export const metadata:Metadata={title:"The Blush Journal | Permanent Makeup & Skin Care",description:"Thoughtful permanent makeup and skin-care guidance from Blush Ink & Beauty Studio in North Little Rock, Arkansas."};
+export const metadata:Metadata={title:"The Blush Journal | Permanent Makeup & Skin Care",description:"Thoughtful permanent makeup and skin-care guidance from Blush Ink & Beauty Studio in North Little Rock, Arkansas.",alternates:{canonical:"/blog"}};
 const posts=[
   {category:"Powder Brows",title:"What makes powder brows look soft—not stamped on?",copy:"A look at mapping, pigment choice, and why a beautifully healed result begins with restraint.",href:"/powder-brows",image:"/images/powder-brows-campaign.png",alt:"Defined powder brows on a luxury beauty model"},
   {category:"Lip Blushing",title:"Lip blushing: the polished, everyday version of lip color.",copy:"The difference between a softly enhanced lip blush and traditional lipstick, plus what a consultation considers.",href:"/lip-blushing",image:"/images/lip-blushing-campaign.png",alt:"Rosy nude lip blush on a luxury beauty model"},
