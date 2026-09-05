@@ -61,14 +61,25 @@ function required(input: Record<string, unknown>, fields: string[]) {
   return fields.filter((key) => input[key] === undefined || input[key] === null || input[key] === "");
 }
 
+function normalizeUsPhoneForSearch(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  return phone.startsWith("+") ? phone : `+${digits}`;
+}
+
 async function findCustomer(input: Record<string, unknown>) {
   const phone = typeof input.phone_number === "string" ? input.phone_number.trim() : "";
   const email = typeof input.email_address === "string" ? input.email_address.trim() : "";
   if (!phone && !email) return null;
-  const filters: Record<string, string> = {};
-  if (phone) filters.phone_number = phone;
-  else if (email) filters.email_address = email;
-  const result = await square("/customers/search", "POST", { query: { filter: filters }, limit: 10 });
+
+  // Square CustomerFilter phone_number/email_address are CustomerTextFilter objects,
+  // not raw strings. Search one identifier at a time because combined filters are ANDed.
+  const filter: Record<string, unknown> = {};
+  if (phone) filter.phone_number = { exact: normalizeUsPhoneForSearch(phone) };
+  else if (email) filter.email_address = { exact: email };
+
+  const result = await square("/customers/search", "POST", { query: { filter }, limit: 10 });
   const customers = Array.isArray(result.customers) ? result.customers : [];
   const first = customers[0];
   return first && typeof first === "object" ? first as Record<string, unknown> : null;
