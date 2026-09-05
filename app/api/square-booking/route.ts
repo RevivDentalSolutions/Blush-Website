@@ -5,6 +5,11 @@ const squareVersion = "2026-08-19";
 const highLevelUrl = "https://services.leadconnectorhq.com";
 const depositAmountCents = 5000;
 
+type ApiResponse = Record<string, unknown> & {
+  errors?: Array<{ detail?: string; code?: string }>;
+  message?: string;
+};
+
 function authorized(request: NextRequest) {
   const secret = process.env.VAPI_WEBHOOK_SECRET;
   return Boolean(secret && request.headers.get("authorization") === `Bearer ${secret}`);
@@ -20,21 +25,21 @@ async function square(path: string, method: "GET" | "POST" | "PUT" | "DELETE", b
     cache: "no-store",
   });
   const text = await response.text();
-  let data: any = {};
+  let data: ApiResponse = {};
   if (text) {
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(text) as ApiResponse;
     } catch {
       const preview = text.replace(/\s+/g, " ").trim().slice(0, 300);
       throw new Error(`Square returned a non-JSON response (HTTP ${response.status})${preview ? `: ${preview}` : "."}`);
     }
   }
   if (!response.ok) {
-    const squareError = data?.errors?.[0];
-    const detail = squareError?.detail ?? squareError?.code ?? data?.message ?? "Square request failed.";
+    const squareError = data.errors?.[0];
+    const detail = squareError?.detail ?? squareError?.code ?? data.message ?? "Square request failed.";
     throw new Error(`Square API error (HTTP ${response.status}): ${detail}`);
   }
-  return data;
+  return data as Record<string, any>;
 }
 
 async function highLevel(path: string, method: "POST", body: unknown) {
