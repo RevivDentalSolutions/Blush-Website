@@ -72,13 +72,9 @@ async function findCustomer(input: Record<string, unknown>) {
   const phone = typeof input.phone_number === "string" ? input.phone_number.trim() : "";
   const email = typeof input.email_address === "string" ? input.email_address.trim() : "";
   if (!phone && !email) return null;
-
-  // Square CustomerFilter phone_number/email_address are CustomerTextFilter objects,
-  // not raw strings. Search one identifier at a time because combined filters are ANDed.
   const filter: Record<string, unknown> = {};
   if (phone) filter.phone_number = { exact: normalizeUsPhoneForSearch(phone) };
   else if (email) filter.email_address = { exact: email };
-
   const result = await square("/customers/search", "POST", { query: { filter }, limit: 10 });
   const customers = Array.isArray(result.customers) ? result.customers : [];
   const first = customers[0];
@@ -91,11 +87,7 @@ async function resolveCustomer(input: Record<string, unknown>) {
   if (existing && typeof existing.id === "string" && existing.id) return { id: existing.id, created: false, customer: existing };
   const missing = required(input, ["given_name", "phone_number"]);
   if (missing.length) throw new Error(`Customer not found. To create one, provide: ${missing.join(", ")}.`);
-  const customerBody: Record<string, unknown> = {
-    idempotency_key: crypto.randomUUID(),
-    given_name: input.given_name,
-    phone_number: input.phone_number,
-  };
+  const customerBody: Record<string, unknown> = { idempotency_key: crypto.randomUUID(), given_name: input.given_name, phone_number: input.phone_number };
   if (input.family_name) customerBody.family_name = input.family_name;
   if (input.email_address) customerBody.email_address = input.email_address;
   if (input.note) customerBody.note = input.note;
@@ -113,8 +105,7 @@ async function createDepositLink(input: Record<string, unknown>, locationId: str
   const dateNote = typeof input.start_at === "string" && input.start_at ? ` for ${input.start_at}` : "";
   const clientName = [input.given_name, input.family_name].filter((value) => typeof value === "string" && value.trim()).join(" ");
   const paymentLinkBody: Record<string, unknown> = {
-    idempotency_key: crypto.randomUUID(),
-    description: `Blush $50 appointment deposit - ${serviceName}`,
+    idempotency_key: crypto.randomUUID(), description: `Blush $50 appointment deposit - ${serviceName}`,
     quick_pay: { name: `${serviceName} - Appointment Deposit`, price_money: { amount: depositAmountCents, currency: "USD" }, location_id: locationId },
     payment_note: `Blush appointment deposit${clientName ? ` for ${clientName}` : ""}${dateNote}`,
   };
@@ -127,25 +118,14 @@ async function sendDepositSms(input: Record<string, unknown>, paymentUrl: string
   if (!locationId) throw new Error("HighLevel location ID is not configured.");
   const missing = required(input, ["given_name", "family_name", "phone_number"]);
   if (missing.length) throw new Error(`Missing SMS contact details: ${missing.join(", ")}`);
-  const contactBody: Record<string, unknown> = {
-    firstName: input.given_name,
-    lastName: input.family_name,
-    phone: input.phone_number,
-    locationId,
-    source: "Riley - Blush AI Receptionist",
-  };
+  const contactBody: Record<string, unknown> = { firstName: input.given_name, lastName: input.family_name, phone: input.phone_number, locationId, source: "Riley - Blush AI Receptionist" };
   if (input.email_address) contactBody.email = input.email_address;
   const contactResult = await highLevel("/contacts/upsert", "POST", contactBody);
   const contactId = contactResult.contact?.id;
   if (!contactId) throw new Error("HighLevel did not return a contact ID.");
   const serviceName = typeof input.service_name === "string" && input.service_name.trim() ? input.service_name.trim() : "your Blush appointment";
   const message = `Hi ${String(input.given_name)}, this is Blush Ink & Beauty Studio. Your $50 deposit for ${serviceName} can be paid securely through Square here: ${paymentUrl} The deposit is required to secure your appointment.`;
-  const messageResult = await highLevel("/conversations/messages", "POST", {
-    type: "SMS",
-    contactId,
-    message,
-    status: "pending",
-  });
+  const messageResult = await highLevel("/conversations/messages", "POST", { type: "SMS", contactId, message, status: "pending" });
   return { contactId, messageId: messageResult.messageId ?? messageResult.id, message: messageResult };
 }
 
@@ -173,12 +153,25 @@ export async function POST(request: NextRequest) {
     }
 
     if (input.action === "create_booking") {
-      const missing = required(input, ["start_at", "service_variation_id", "team_member_id"]);
+      const missing = required(input, ["start_at", "service_variation_id", "team_member_id", "service_variation_version"]);
       if (missing.length) return NextResponse.json({ error: `Missing booking details: ${missing.join(", ")}` }, { status: 400 });
       const customer = await resolveCustomer(input);
-      const segment: Record<string, unknown> = { duration_minutes: input.duration_minutes ?? 180, service_variation_id: input.service_variation_id, team_member_id: input.team_member_id };
-      if (input.service_variation_version) segment.service_variation_version = input.service_variation_version;
-      const result = await square("/bookings", "POST", { idempotency_key: crypto.randomUUID(), booking: { location_id: locationId, customer_id: customer.id, start_at: input.start_at, appointment_segments: [segment], customer_note: input.customer_note } });
+
+      // Buyer-level CreateBooking: Square derives duration from the bookable service.
+      // Sending duration_minutes is a seller-level write and fails for merchants on Appointments Free.
+      const segment: Record<string, unknown> = {
+        service_variation_id: input.service_variation_id,
+        team_member_id: input.team_member_id,
+        service_variation_version: input.service_variation_version,
+      };
+      const booking: Record<string, unknown> = {
+        location_id: locationId,
+        customer_id: customer.id,
+        start_at: input.start_at,
+        appointment_segments: [segment],
+      };
+      if (input.customer_note !== undefined) booking.customer_note = input.customer_note;
+      const result = await square("/bookings", "POST", { idempotency_key: crypto.randomUUID(), booking });
       return NextResponse.json({ success: true, customer_id: customer.id, customer_created: customer.created, booking: result.booking });
     }
 
@@ -221,7 +214,7 @@ export async function POST(request: NextRequest) {
       if (input.start_at) booking.start_at = input.start_at;
       if (input.customer_note !== undefined) booking.customer_note = input.customer_note;
       if (input.service_variation_id && input.team_member_id) {
-        const segment: Record<string, unknown> = { duration_minutes: input.duration_minutes ?? 180, service_variation_id: input.service_variation_id, team_member_id: input.team_member_id };
+        const segment: Record<string, unknown> = { service_variation_id: input.service_variation_id, team_member_id: input.team_member_id };
         if (input.service_variation_version) segment.service_variation_version = input.service_variation_version;
         booking.appointment_segments = [segment];
       }
