@@ -12,6 +12,25 @@ export const site = {
   mapEmbed: "https://maps.google.com/maps?q=6%20Windsong%20Drive%20North%20Little%20Rock%20Arkansas&t=&z=13&ie=UTF8&iwloc=&output=embed"
 };
 
+export type BookingSource =
+  | "homepage"
+  | "service:powder-brows"
+  | "service:lip-blushing"
+  | "service:permanent-eyeliner"
+  | "service:procell-microchanneling"
+  | "service:scar-camouflage"
+  | "service:stretch-mark-revision"
+  | "service:corrections"
+  | "touch-ups"
+  | "book-now"
+  | "contact"
+  | "header"
+  | "sticky";
+
+export function bookingLinkFor(source: BookingSource) {
+  return `${site.bookingLink}&blush_source=${encodeURIComponent(source)}`;
+}
+
 export type Service = { slug:string; name:string; price?:string; desc:string; eyebrow:string; image?:string; alt?:string; overview:string; forWhom:string; benefits:string[]; recovery:string; timing:string; faqs:{q:string;a:string}[] };
 export const services: Service[] = [
  {slug:"powder-brows",name:"Powder Brows",price:"$500",eyebrow:"Brow artistry",desc:"Soft, polished definition customized to your features.",image:"https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&w=1400&q=85",alt:"Editorial portrait highlighting softly defined brows",overview:"A softly shaded brow treatment designed around your natural structure, preferred shape, and selected pigment tone.",forWhom:"Guests seeking more consistent brow shape, fullness, or definition without a harsh finish.",benefits:["Customized mapping","Careful pigment selection","Soft, buildable definition"],recovery:"Color may appear stronger at first and soften as the area heals. Follow the personalized aftercare instructions provided at your visit.",timing:"Appointment timing and any recommended refinement session are confirmed during consultation.",faqs:[{q:"Will my brows look too dark?",a:"Fresh pigment commonly appears bolder before softening. Your shape and color are selected with your preferences and features in mind."},{q:"How should I prepare?",a:"Contact the studio before your visit for current preparation guidance tailored to you."}]},
