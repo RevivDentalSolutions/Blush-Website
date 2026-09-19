@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
 import {site} from "@/data/site";
+import {BookingLink} from "@/components/BookingLink";
 
 export const metadata:Metadata={
   title:"Permanent Makeup Touch-Ups & Refreshes in North Little Rock",
@@ -13,7 +14,7 @@ export default function Page(){return <section className="section container">
   <div className="detail-intro">
     <div>
       <p>Permanent makeup changes as your skin, lifestyle, and preferences change. If you are ready to revisit your brows, lips, or eyeliner, start with the current Square appointment options.</p>
-      <a className="btn btn-dark" href={site.bookingLink}>View Square appointments</a>
+      <BookingLink className="btn btn-dark" source="touch-ups">View Square appointments</BookingLink>
     </div>
     <div>
       <h3>Not sure which option fits?</h3>
