@@ -1,3 +1,5 @@
+export const canonicalUrl = "https://blushinkstudio.com";
+
 export const site = {
   name: "Blush Ink & Beauty Studio",
   shortName: "BLUSH",

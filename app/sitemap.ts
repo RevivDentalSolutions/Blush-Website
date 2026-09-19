@@ -1,2 +1,30 @@
 export const dynamic = "force-static";
-import type {MetadataRoute} from "next";import {services} from "@/data/site";export default function sitemap():MetadataRoute.Sitemap{const base="https://blushinkstudio.com";return ["","/permanent-makeup","/powder-brows","/lip-blushing","/permanent-eyeliner","/corrections","/portfolio","/about","/faqs","/contact","/book-now","/blog",...services.filter(s=>!["powder-brows","lip-blushing","permanent-eyeliner"].includes(s.slug)).map(s=>`/${s.slug}`)].map(url=>({url:base+url,changeFrequency:url===""?"weekly":"monthly",priority:url===""?1:0.7}))}
+
+import type {MetadataRoute} from "next";
+import {canonicalUrl, services} from "@/data/site";
+
+const indexablePaths = [
+  "",
+  "/permanent-makeup",
+  "/powder-brows",
+  "/lip-blushing",
+  "/permanent-eyeliner",
+  "/corrections",
+  "/portfolio",
+  "/about",
+  "/faqs",
+  "/contact",
+  "/book-now",
+  "/blog",
+  ...services
+    .filter((service) => !["powder-brows", "lip-blushing", "permanent-eyeliner"].includes(service.slug))
+    .map((service) => `/${service.slug}`),
+];
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return indexablePaths.map((path) => ({
+    url: `${canonicalUrl}${path}`,
+    changeFrequency: path === "" ? "weekly" : "monthly",
+    priority: path === "" ? 1 : 0.7,
+  }));
+}
