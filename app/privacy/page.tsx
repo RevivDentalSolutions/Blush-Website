@@ -1,1 +1,50 @@
-import type {Metadata} from "next";export const metadata:Metadata={robots:{index:false,follow:true}};export default function Page(){return <section className="page-hero container"><p className="eyebrow">Legal</p><h1>Privacy</h1><p>Approved privacy policy content is needed before launch. This page intentionally contains no invented legal terms.</p></section>}
+import type { Metadata } from "next";
+import Link from "next/link";
+import { LegalPage } from "@/components/LegalPage";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How Blush Ink & Beauty Studio handles booking, consultation, website, and messaging information.",
+  alternates: { canonical: "/privacy" },
+  robots: { index: false, follow: true },
+};
+
+export default function PrivacyPage() {
+  return (
+    <LegalPage title="Privacy Policy">
+      <p>This policy explains how Blush Ink &amp; Beauty Studio handles information when you visit our website, contact us, book, receive a service, or message us.</p>
+      <section>
+        <h2>Contact, booking, and treatment information</h2>
+        <p>We collect the name, phone number, email address, service interest, and other details you provide when you contact us or request an appointment. We use this information to respond, assess service suitability, manage bookings and payments, and support aftercare. Our online consultation form is designed to route requests to HighLevel when enabled.</p>
+        <p>During intake, we may request relevant health and treatment history, signed consent, and identification. Arkansas body art rules require certain client and procedure records, including a copy of valid photo identification for covered procedures. Use the studio’s designated intake process for sensitive information.</p>
+      </section>
+      <section>
+        <h2>Square booking and payments</h2>
+        <p>Square handles online scheduling and processes payments made through its checkout, including booking deposits. Square receives the booking, contact, and payment information needed for those services. Our website does not ask you to enter card numbers. The studio may receive booking and transaction details such as the amount and payment status. See <a href="https://squareup.com/us/en/legal/general/buyer-features">Square’s buyer privacy notice</a> for its buyer features.</p>
+      </section>
+      <section>
+        <h2>Client photographs</h2>
+        <p>We may request or take photos to assess existing work, plan treatment, or document results. We ask for separate permission before using identifiable client photos in a portfolio, social post, or ad. Contact the studio to withdraw permission for future promotional use.</p>
+      </section>
+      <section>
+        <h2>Website analytics, cookies, and advertising</h2>
+        <p>We measure clicks on booking links. Our website records which button or campaign link directed you to Square and, for certain follow-up links, a campaign group. These booking events log predefined labels. When you submit a consultation request, the form can include the page you used, your referring page, and campaign tags to help us understand where requests came from.</p>
+        <p>Our location page embeds Google Maps, and our site loads typefaces from Google Fonts. Those services receive requests from your browser when their content loads. When you follow a booking or ad link, the platform you visit may use cookies or similar technologies under its own privacy policy. This includes Square and the platforms where our ads appear, such as Facebook or Instagram. You can manage cookies through your browser and ad preferences through the platform.</p>
+      </section>
+      <section>
+        <h2>SMS and RCS messaging</h2>
+        <p>To answer inquiries, deliver messages you requested or opted in to, and manage your preferences, we or our messaging providers may process your mobile number, message content, delivery and reply information, and consent or opt-out records. HighLevel can send Square deposit links by SMS. For RCS, your message and delivery information may be handled by our messaging provider, Google’s RCS service, and participating carriers to deliver and support the conversation.</p>
+        <p>We use messaging information to operate the messaging program. We do not share mobile opt-in information or messaging consent with third parties for their own marketing. Reply <strong>STOP</strong> to opt out. See our <Link href="/terms">Terms of Service</Link> for message types, frequency, rates, and help.</p>
+      </section>
+      <section>
+        <h2>Other disclosures, protection, and retention</h2>
+        <p>We provide information to vendors as needed to host the site, handle consultation requests, book appointments, process payments, or deliver messages. We may disclose records when required by law or to the Arkansas Department of Health as required for body art oversight.</p>
+        <p>We limit access to client records to people who need them for studio operations or required oversight. We retain information as needed for appointments, payments, disputes, messaging preferences, and legal recordkeeping. Arkansas requires covered body art records to be kept for at least one year from the last entry. Longer requirements can apply to some records.</p>
+      </section>
+      <section>
+        <h2>Your privacy choices</h2>
+        <p>Contact us to ask for access, correction, or deletion of your information, or to change your photo or messaging preferences. We may verify your identity and retain information where the law permits or requires it. Please use our designated intake process for identification, payment details, and sensitive treatment information.</p>
+      </section>
+    </LegalPage>
+  );
+}
