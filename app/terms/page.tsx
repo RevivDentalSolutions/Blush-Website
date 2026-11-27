@@ -35,9 +35,15 @@ export default function TermsPage() {
         <p>The website provides general service information. Confirm current prices, availability, and treatment suitability with the studio. Use the site lawfully and provide accurate information when booking or contacting us. Get permission before reusing studio photography or other original content.</p>
       </section>
       <section>
-        <h2>SMS and RCS messaging</h2>
-        <p>If you start a conversation by text or RCS, we may reply about your inquiry. If you opt in to studio messages, you may receive appointment confirmations or reminders, scheduling updates, and Square deposit links. Promotional messages require a separate opt-in. Consent to promotional messaging is optional and is never a condition of purchase.</p>
-        <p>Message frequency varies with your appointments, requests, and preferences. Message and data rates may apply. Reply <strong>STOP</strong> to opt out of the studio messaging program. After the opt-out confirmation, program messages stop until you opt in again. For help, call <a href={site.phoneHref}>{site.phone}</a>. Read the <Link href="/privacy">Privacy Policy</Link> for how messaging data is handled.</p>
+        <h2>Square appointment notifications and messages</h2>
+        <p>Blush uses Square Appointments for booking confirmations, reminders, and appointment changes. Square may send those notices by text or email based on your notification preferences. We use Square Messages for one-to-one service conversations. We respond to messages you send us and use your mobile number for outbound texts within the scope of your consent. Promotional texting requires separate consent and is optional.</p>
+        <p>Reply <strong>STOP</strong> to the Square appointment text to stop SMS appointment notifications. For a one-to-one Square Messages conversation, follow any opt-out instructions in the message or tell us in that conversation that you want texts to stop.</p>
+      </section>
+      <section>
+        <h2>Google Business Profile RCS messaging</h2>
+        <p>Once enabled for Blush, you can start an RCS chat from our Google Business Profile. Google’s automated assistant may respond first, and studio staff can take over. We use the chat to answer your inquiry and share booking information or a link to Square. Starting a Google chat gives us permission to respond about that inquiry. Promotional messages require separate consent.</p>
+        <p>Reply <strong>STOP</strong> in the Google chat or choose <strong>Unsubscribe</strong> in Google Messages where available. Blush will honor the request for Google RCS. Manage Square texts separately through the Square conversation or by contacting us. A messaging opt-out does not cancel your appointment.</p>
+        <p>Message frequency varies with your appointments and conversations. Message and data rates may apply. For help, call <a href={site.phoneHref}>{site.phone}</a>. See the <Link href="/privacy">Privacy Policy</Link> for how we handle messaging information.</p>
       </section>
     </LegalPage>
   );

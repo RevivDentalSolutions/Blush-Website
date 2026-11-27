@@ -9,6 +9,5 @@
 
 ## Access / configuration
 
-1. **GoHighLevel inbound webhook URL:** create or provide the Blush workflow webhook URL, then add it in Vercel as the secret `GHL_BLUSH_LEAD_WEBHOOK_URL`. The site will send name, phone, email, service interest, message, source/page, referrer, UTM data, and submitted time.
-2. **Analytics:** provide the existing GA4 Measurement ID only if one already exists. No tracking account or ID was created.
-3. **Approved written policies:** final deposit, cancellation/rescheduling, lateness, touch-up, and eligibility policy language before the public Policies page can be expanded or indexed.
+1. **Analytics:** provide the existing GA4 Measurement ID only if one already exists. No tracking account or ID was created.
+2. **Approved written policies:** final deposit, cancellation/rescheduling, lateness, touch-up, and eligibility policy language before the public Policies page can be expanded or indexed.
